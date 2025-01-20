@@ -6,7 +6,7 @@ import {
   Navigate,
 } from "react-router-dom";
 import { routeToTitle, routeAliases } from "@/assets/data/routes/routeTitles";
-import { Login, Register } from "../views/Login-Register";
+import { ForgotPassword, Login, Register } from "../views/Login-Register";
 
 const MainRoutes = () => {
   useEffect(() => {
@@ -17,7 +17,7 @@ const MainRoutes = () => {
     let matchingRoute = routeToTitle[path] || null;
     if (!matchingRoute) {
       const alias = routeAliases[path];
-      matchingRoute = alias && routeToTitle[alias];
+      matchingRoute = alias ? routeToTitle[alias] : null;
     }
     return matchingRoute;
   };
@@ -28,6 +28,7 @@ const MainRoutes = () => {
       <Route path="/" element={<Navigate to="/login" replace />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
     </Routes>
   </Router>
   );

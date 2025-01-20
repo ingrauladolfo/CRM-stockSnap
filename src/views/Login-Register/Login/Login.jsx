@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import fondo from "@/assets/images/fondo.webp";
 import logo from "@/assets/images/logo.webp";
 import { DataConnection, LoginForm } from "@/components/Login-Register";
@@ -11,10 +11,8 @@ const Login = () => {
 
   // Determina el tipo de campo según la visibilidad
   const getPasswordType = (field) => (passwordVisibility[field] ? 'text' : 'password');
-
   return (
-    <form>
-      <div className="h-full bg-[#264653]">
+    <div className="h-full bg-[#264653]">
         <div className="flex justify-center h-screen">
           <div
             className="hidden bg-cover opacity-75 bg-blend-luminosity lg:block lg:w-2/3"
@@ -62,7 +60,6 @@ const Login = () => {
           </div>
         </div>
       </div>
-    </form>
   );
 };
 
