@@ -1,0 +1,149 @@
+import React, { useEffect, useRef, useState } from 'react'
+import { errorForm, validationEmail, validationForm, validationNombre, validationPassword, validationRol } from '../../../utils';
+import { FaEnvelope, FaEye, FaEyeSlash, FaLock, FaUser } from 'react-icons/fa6';
+import Alert from '../../Alert';
+
+const RegisterForm = ({ onSubmit, passwordType, passwordConfirmType, showPassword, showPasswordConfirm, toggleShowPasswordField }) => {
+    const [correo, setCorreo] = useState('');
+    const [nombre, setNombre] = useState('');
+    const [contrasenia, setContrasenia] = useState('');
+    const [rol, setRol] = useState('');
+    const [contraseniaConfirmada, setContraseniaConfirmada] = useState('');
+    const [errors, setErrors] = useState({});
+    const [showAlert, setShowAlert] = useState(false);
+    const timeoutRef = useRef(null);
+    const PASSWORD_REGEX = /^(?=(.*[a-z]){2,})(?=(.*[A-Z]){2,})(?=(.*\d){2,})(?=(.*[@$!%*?&^#]){2,})[A-Za-z\d@$!%*?&^#]{16,}$/;
+    useEffect(() => {
+        return () => {
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
+            }
+        };
+    }, []);
+    const validations = {
+        nombre: validationNombre,
+        rol: validationRol,
+        correo: validationEmail,
+        // pasar siempre ambos valores
+        contrasenia: value => validationPassword(value, PASSWORD_REGEX, contraseniaConfirmada),
+        contraseniaConfirmada: value => validationPassword(contrasenia, PASSWORD_REGEX, value),
+    };
+    const fields = { nombre, contrasenia, correo, rol };
+    const sendData = () => {
+        if (!validationForm(validations, setErrors, fields, PASSWORD_REGEX)) {
+            if (timeoutRef.current) { clearTimeout(timeoutRef.current); }
+            timeoutRef.current = setTimeout(() => { setShowAlert(true); }, 50);
+            return;
+        }
+        onSubmit({ nombre, contrasenia, correo, rol });
+    };
+    const hasError = errorForm(errors)
+    return (
+        <div className="relative col-span-1 lg:col-span-2 ">
+            <div>
+                <label htmlFor="email" className="block mb-2 text-sm text-gray-600 dark:text-gray-200">
+                    Correo electrónico
+                </label>
+                <div className="relative">
+                    <span className="absolute inset-y-0 left-0 flex items-center pl-5 text-gray-600">
+                        <FaEnvelope color='#EDF2E4' />
+                    </span>
+                    <input type="email" name="correo" value={correo} onChange={(e) => setCorreo(e.target.value)} placeholder="correo@correo.com" className={`block w-full pl-10 pr-4 py-2 mt-2 font-bold text-[#EDF2E4] placeholder-[#EDF2E4] bg-[#264653] rounded-full focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40 border-2 border-[#E9C46A] ${errors.correo ? 'border-red-500' : ''}`} />
+                </div>
+                {errors.correo && (
+                    <p className="text-red-500 text-sm mt-2 mb-4">
+                        {errors.correo}
+                    </p>
+                )}
+            </div>
+            <div className="mt-3">
+                <label htmlFor="fullName" className="block mb-2 text-sm text-gray-600 dark:text-gray-200">
+                    Nombre completo
+                </label>
+                <div className="relative">
+                    <span className="absolute inset-y-0 left-0 flex items-center pl-5 text-gray-600">
+                        <FaUser color="#EDF2F4" />
+                    </span>
+                    <input type="text" name="nombre" value={nombre} placeholder="Nombre completo" onChange={(e) => setNombre(e.target.value)} className={`block w-full pl-10 pr-4 py-2 mt-2 font-bold text-[#EDF2E4] placeholder-[#EDF2E4] bg-[#264653] rounded-full focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40 border-2 border-[#E9C46A] ${errors.nombre ? 'border-red-500' : ''}`} />
+                </div>
+                {errors.nombre && (
+                    <p className="text-red-500 text-sm mt-2 mb-4">
+                        {errors.nombre}
+                    </p>
+                )}
+            </div>
+            <div className="mt-3">
+                <div className="flex justify-between mb-2">
+                    <label htmlFor="password" className="text-sm text-gray-600 dark:text-gray-200">
+                        Contraseña
+                    </label>
+                </div>
+                <div className="relative ">
+                    <span className="absolute inset-y-0 left-0 flex items-center pl-5 text-gray-600">
+                        <FaLock color="#EDF2F4" />
+                    </span>
+                    <input type={passwordType} name="contrasenia" value={contrasenia} placeholder="Tu contraseña" onChange={e => setContrasenia(e.target.value)} className={`block w-full pl-10 pr-4 py-2 mt-2 font-bold text-[#EDF2E4] placeholder-[#EDF2E4] bg-[#264653] rounded-full focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40 border-2 border-[#E9C46A] ${errors.contrasenia ? 'border-red-500' : ''}`} />
+                    <button type="button" className="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer" onClick={() => toggleShowPasswordField('password')} aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'} role="switch" aria-checked={showPassword}                    >
+                        {showPassword ? <FaEye color="#EDF2E4" /> : <FaEyeSlash color='#EDF2E4' />}
+                    </button>
+
+                </div>
+                {errors.contrasenia && (
+                    <p className="text-red-500 text-sm mt-2">
+                        {errors.contrasenia}
+                    </p>
+                )}
+
+            </div>
+            <div className="mt-3">
+                <div className="flex justify-between mb-2">
+                    <label htmlFor="passwordConfirm" className="text-sm text-gray-600 dark:text-gray-200">
+                        Confirmar contraseña
+                    </label>
+                </div>
+                <div className="relative">
+                    <span className="absolute inset-y-0 left-0 flex items-center pl-5 text-gray-600">
+                        <FaLock color="#EDF2F4" />
+                    </span>
+                    <input type={passwordConfirmType} name="passwordConfirm" value={contraseniaConfirmada} placeholder="Confirma tu contraseña" onChange={e => setContraseniaConfirmada(e.target.value)} className={`block w-full pl-10 pr-4 py-2 mt-2 font-bold text-[#EDF2E4] placeholder-[#EDF2E4] bg-[#264653] rounded-full focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40 border-2 border-[#E9C46A] ${errors.contrasenia ? 'border-red-500' : ''}`} />
+                    <button type="button" className="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer" onClick={() => toggleShowPasswordField('passwordConfirm')} aria-label={showPasswordConfirm ? 'Ocultar contraseña' : 'Mostrar contraseña'} role="switch" aria-checked={showPasswordConfirm}>
+                        {showPasswordConfirm ? <FaEye color="#EDF2E4" /> : <FaEyeSlash color='#EDF2E4' />}
+                    </button>
+
+                </div>
+                {errors.contrasenia && (
+                    <p className="text-red-500 text-sm mt-2 mb-4">
+                        {errors.contrasenia}
+                    </p>
+                )}
+            </div>
+            <div className="mt-3">
+                <label htmlFor="role" className="block mb-2 text-sm text-gray-600 dark:text-gray-200">
+                    Rol
+                </label>
+                <select id="role" name="role" value={rol} onChange={e => setRol(e.target.value)} className={`block w-full pl-10 pr-4 py-2 mt-2 font-bold text-[#EDF2E4] placeholder-[#EDF2E4] bg-[#264653] rounded-full focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40 border-2 border-[#E9C46A] ${errors.rol ? 'border-red-500' : ''}`}>
+                    <option value="">Selecciona tu rol...</option>
+                    <option value="admin">Administrador</option>
+                    <option value="user">Usuario</option>
+                    <option value="guest">Invitado</option>
+                </select>
+                {errors.rol && (
+                    <p className="text-red-500 text-sm mt-2 mb-4">
+                        {errors.rol}
+                    </p>
+                )}
+            </div>
+            <div className="mt-3 col-span-1 lg:col-span-2 flex flex-col items-center">
+                <input type="submit" onClick={sendData} className={`w-full px-4 py-2 tracking-wide border-[#5855D6] hover:border-[#d9d9d9] text-white transition-colors duration-200 transform bg-transparent rounded-full border-4 ${hasError ? 'hover:bg-[#EF4444]' : 'hover:bg-[#E9C46A]'} focus:outline-none focus:bg-[#d9d9d9] focus:ring focus:ring-blue-300 focus:ring-opacity-50`} value="Iniciar sesión" style={{ border: hasError ? "5px solid #EF4444" : "5px solid #E9C46A" }} />
+            </div>
+            {hasError && (
+                <p className="text-red-500 text-sm mb-4">
+                    Por favor, corrige los errores marcados arriba.
+                </p>
+            )}
+            <Alert show={showAlert} title="Error de validación" text={correo === '' && contrasenia === '' ? "Por favor complete todos los campos requeridos" : `<div style="text-align: center;">${[errors.correo, errors.contrasenia].filter(error => error).join('<br/>')}</div>`} icon="error" onConfirm={() => setShowAlert(false)} onClose={() => setShowAlert(false)} confirmButtonText="Aceptar" showClass={{ popup: `animate__animated animate__headShake animate__faster` }} hideClass={{ popup: `animate__animated animate__fadeOutUp animate__faster` }} />
+        </div>
+    )
+}
+
+export default RegisterForm

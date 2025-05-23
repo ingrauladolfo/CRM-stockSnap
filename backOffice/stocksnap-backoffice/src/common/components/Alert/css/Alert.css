@@ -1,0 +1,18 @@
+/* En tu archivo CSS global */
+.swal-close-button {
+    color: #000000;
+    /* Color del icono X */
+    font-size: 1.5rem;
+    transition: opacity 0.3s;
+}
+
+.swal-close-button:hover {
+    opacity: 0.75;
+    color: #000000;
+    /* Color del icono X */
+}
+
+.swal2-popup .swal2-html-container {
+    text-align: center;
+    white-space: pre-line;
+}
