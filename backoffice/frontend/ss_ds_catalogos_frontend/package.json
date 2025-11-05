@@ -1,14 +1,14 @@
 {
-  "name": "ss_menu_frontend",
+  "name": "ss_ds_catalogos_frontend",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --port 5004 --strictPort",
+    "dev": "vite --port 5005 --strictPort",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview --port 5004 --strictPort",
-    "serve": "vite preview --port 5004 --strictPort",
+    "preview": "vite preview --port 5005 --strictPort",
+    "serve": "vite preview --port 5005 --strictPort",
     "start": "npm run build && npm run serve"
   },
   "dependencies": {
